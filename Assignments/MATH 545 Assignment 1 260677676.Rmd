@@ -1,0 +1,738 @@
+---
+title: "MATH 545 Assignment 1 - 260677676"
+author: "Dan Yunheum Seol"
+date: '2018-09-27'
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+##0. 
+We take it for granted that:
+1. A sequence of random variables $\{X_t\}$ will have their second moments as covariances given that $\mathbb{E}[X_t] = 0$ $\forall t$.
+2. The linearity of expected value function $\mathbb{E}[]$. 
+
+##1
+\emph{Question 1}
+
+Let $\{Z_t\}$ be $Z_t \sim N(0,\sigma^2)$ and let $a, b, c \in \mathbb{R}$ be finite-valued constants. Which of the following processes are stationary? For each stationary process, show that it is stationary and specify the mean and autocovariance functions. For each non-stationary process, show why it is non-stationary.
+
+\texttt{Solution.}
+
+a) $X_t = a + bZ_t + cZ_{t-2}$
+First we check the mean. We are given $\mathbb{E}[Z_t] = 0$ $\forall t$
+Since $\mathbb{E}[]$ is a linear map, we obtain 
+\[
+\mathbb{E}[X_t] = \mathbb{E}[a + bZ_t + cZ_{t-2}] = \mathbb{E}[a] + b\mathbb{E}[Z_t] + c\mathbb{E}[Z_{t-2}] = a + b \times 0 + c \times 0 = a 
+\]
+
+Now we will check the autocovariance function $\gamma_X(h) =\mathrm{Cov}(X_{t+h}, X_t)$. We know
+\[
+\mathrm{Cov}(Z_{t+h}, Z_t) =
+\begin{cases}
+ \mathrm{Var}[Z_t] = \sigma^2 \ \ \text{if}\ n=0 \\
+0\  \text{otherwise due to independence}
+\end{cases}
+\]
+
+We will start with variances, in other words, the cases where $h = 0$.
+\[
+\gamma_X(0) = \mathrm{Var}[X_t] = \mathrm{Var}[a + bZ_t + cZ_{t-2}]
+\]
+Due to independence of $\{Z_t\}$ $\forall t$, 
+\[
+\mathrm{Var}[a + bZ_t + cZ_{t-2}] = b^2\mathrm{Var}[Z_t] + c^2\mathrm{Var}[Z_{t-2}] = b^2 \sigma^2 + c^2 \sigma^2 = (b^2+c^2) \sigma^2
+\]
+When $h \neq 0$, we would need to scrutinize some cases.
+(WLOG) $h \geq 1$ for \[\gamma_X(-h) = \mathrm{Cov}(X_{t-h}, X_t) = \mathrm{Cov}(X_{t-h}, X_{t-h+h}) = \gamma_X(h) \] through re-indexing.
+\[ 
+\mathrm{Cov}(X_{t+h}, X_t) = \mathbb{E}[X_{t+h}X_t] = \mathbb{E}[(a + bZ_{t+h} + cZ_{t+h-2})(a + bZ_t + cZ_{t-2}) - \mathbb{E}[X_{t+h}]\mathbb{E}[X_{t}] ]\]
+
+\[
+= \mathbb{E}[a^2 + abZ_t + acZ_{t-2} + abZ_{t+h} + b^2 Z_{t+h}Z_t + bcZ_{t+h}Z_{t-2} + acZ_{t+h-2} + bcZ_{t+h-2}Z_t + c^2Z_{t+h-2}Z_{t-2} - a^2] 
+\]
+
+\[
+= ab\mathbb{E}[Z_t] + ac\mathbb{E}[Z_{t-2}] + ab\mathbb{E}[Z_{t+h}] + b^2 \mathbb{E}[Z_{t+h}Z_t] + bc\mathbb{E}[Z_{t+h}Z_{t-2}] + ac\mathbb{E}[Z_{t+h-2}] + bc\mathbb{E}[Z_{t+h-2}Z_t] + c^2\mathbb{E}[Z_{t+h-2}Z_{t-2}] 
+\]
+
+if $|h| \neq  2$
+\[
+= 0 + 0 + 0 + b^2\mathbb{E}[Z_{t+h}]\mathbb{E}[Z_t] +bc\mathbb{E}[Z_{t+h}]\mathbb{E}[Z_{t-2}] + 0 + bc\mathbb{E}[Z_{t+h-2}]\mathbb{E}[Z_t] + c^2\mathbb{E}[Z_{t+h-2}]\mathbb{E}[Z_{t-2}] = 0
+\]
+if $h = 2$ (if $h = -2$ would follow similarly)
+\[
+= b^2 \mathbb{E}[Z_{t+2}Z_t] + bc\mathbb{E}[Z_{t+2}Z_{t-2}] + ac\mathbb{E}[Z_{t}] + bc\mathbb{E}[Z_{t}Z_t] + c^2\mathbb{E}[Z_{t}Z_{t-2}] 
+\]
+\[
+= b^2 \mathbb{E}[Z_{t+2}]\mathbb{E}[Z_t] + bc\mathbb{E}[Z_{t+2}]\mathbb{E}[Z_{t-2}] + ac\mathbb{E}[Z_{t}] + bc\mathbb{E}[Z_{t}^2] + c^2\mathbb{E}[Z_{t}]\mathbb{E}[Z_{t-2}] 
+\]
+\[
+= 0 + 0 + 0 + bc\sigma^2 + 0 = bc \sigma^2
+\]
+
+thus since we have the mean $\mathbb{E}[X_t] = a$ and autocovariance function \[
+\gamma_X(h) = \begin{cases}
+(b^2+c^2) \sigma^2 \ \ h = 0\\
+bc \sigma ^2\ \ \ |h| =2 \\ 
+0 \ \  \text{otherwise}
+\end{cases}
+\]
+not dependent on t, the sequence $\{X_t\}$ is stationary
+We get autocorrelation function
+
+\[
+\gamma_X(h) = \begin{cases}
+1  \ \ h = 0\\
+\frac{bc}{b^2+c^2}\ \ \ |h| =2 \\ 
+0 \ \  \text{otherwise}
+\end{cases}
+\]
+
+#(b)
+
+$X_t = Z_1 \cos(ct) + Z_2 \sin(ct)$
+
+We will look at the mean:
+
+\[
+\mathbb{E}[X_t] = \mathbb{E}[ Z_1 \cos(ct) + Z_2 \sin(ct)] = \mathbb{E}[Z_1 \cos(ct)] + \mathbb{E}[Z_2 \sin(ct)] = \cos(ct) \mathbb{E}[Z_1] + \sin(ct)\mathrm{E}[Z_1] = \cos(ct) \times 0 + \sin(ct) \times 0 = 0
+\]
+
+The mean does not depend on t. Shall we look at the autocovariance function?
+
+\[
+\gamma_X(0) = \mathrm{Var}[X_t] = \mathbb{E}[X_t^2] =  \mathbb{E}[\{Z_1 \cos(ct) + Z_2 \sin(ct)\}^2] =   \mathbb{E}[\{Z_1^2 \cos^2(ct) + Z_2^2 \sin^2(ct) +  2\sin(ct)\cos(ct) Z_1 Z_2\} =  
+\]
+\[
+= \mathbb{E}[Z_1^2 \cos^2(ct)] + \mathbb{E}[Z_2^2 \sin^2(ct)] +  \mathbb{E}[2\sin(ct)\cos(ct) Z_1 Z_2] 
+\]
+\[
+\cos^2(ct)\mathbb{E}[Z_1^2 ] + \sin^2(ct)\mathbb{E}[Z_2^2] +  2\sin(ct)\cos(ct)\mathbb{E}[Z_1 Z_2] 
+\]
+\[
+= \cos^2(ct)\sigma^2 + \sin^2(ct)\sigma^2 +  2\sin(ct)\cos(ct)\mathbb{E}[Z_1] \mathbb{E}[Z_2] = (\cos^2(ct)+\sin^2(ct))\sigma^2 + 0 = \sigma^2 
+\]
+
+but if $h \neq 0$
+\[
+\gamma_X(h) = \mathrm{Cov}(X_{t+h},X_t) = \mathbb{E}[X_{t+h}X_t] =  \mathbb{E}[\{Z_1 \cos(ct) + Z_2 \sin(ct)\}\{ Z_1 \cos(c(t+h)) + Z_2 \sin(c(t+h))\}] = 
+\]
+\[
+\mathbb{E}[\{Z_1^2 \cos(ct)\cos(c(t+h))  + Z_2^2 \sin(ct) \sin(c(t+h) + Z_1Z_2(\cos(ct)\sin(c(t+h))+\cos(c(t+h))\cos(ct))\}] =\]
+\[
+\sigma^2(\cos(ct)\cos(c(t+h))+ \sin(ct) \sin(c(t+h))) 
+\]
+\[
+= \sigma^2(cos(c(t+h) - ct)) = \sigma^2cos(ch)
+\]
+
+In none of the cases it depends on t, thus it is stationary.
+
+#(c) 
+$X_t = Z_t \cos(ct) + Z_{t-1}\sin(ct)$
+
+The mean does not depend on t:
+\[
+\mathbb{E}[X_t] = \mathbb{E}[Z_t \cos(ct) + Z_{t-1}\sin(ct)] = \mathbb{E}[Z_t \cos(ct)] + \mathbb{E}[Z_{t-1}\sin(ct)] = \cos(ct) \mathbb{E}[Z_t] + \sin(ct)\mathbb{E}[Z_{t-1}] = 0
+\]
+
+We can find the sequence is not stationary from its autocovariance function when $h = 1$
+\[
+\gamma_X(1) =  .. = \mathbb{E}[X_{t+1}X_t] =  \mathbb{E}[\{Z_{t+1} \cos(ct+c) + Z_{t}\sin(ct+c)\}\{Z_t \cos(ct) + Z_{t-1}\sin(ct)\}] = 
+\]
+\[
+= \mathbb{E}[Z_{t+1}Z_t\cos(ct+c)\cos(ct)+Z_t Z_{t-1} \sin(ct) \sin(ct+c) + Z_{t+1}Z_{t-1}\cos(ct+c)\sin(ct) + Z_{t}^2 \sin(ct+c)\cos(ct) ] = \] \[\mathbb{E}[Z_{t+1}Z_t\cos(ct+c)\cos(ct)]+\mathbb{E}[Z_t Z_{t-1} \sin(ct) \sin(ct+c)] + \mathbb{E}[Z_{t+1}Z_{t-1}\cos(ct+c)\sin(ct)] +\mathbb{E} [Z_{t}^2 \sin(ct+c)\cos(ct)]
+\]
+\[
+= 0 + 0 + 0 + \sin(ct+c)\cos(ct)\mathbb{E} [Z_{t}^2] =  \sin(ct+c)\cos(ct) \sigma^2
+\]
+So it depends on t, so it is non-stationary.
+except for the case where $c = k*\pi$ for some $k \in \mathbb{Z}$.
+if $h > 1$
+\[
+\gamma_X(1) =  .. = \mathbb{E}[X_{t+h}X_t] =  \mathbb{E}[\{Z_{t+h} \cos(ct+ch) + Z_{t+h-1}\sin(ct+ch)\}\{Z_t \cos(ct) + Z_{t-1}\sin(ct)\}] = 
+\]
+\[
+= \mathbb{E}[Z_{t+h}Z_t\cos(ct+ch)\cos(ct)+Z_{t+h-1} Z_{t-1} \sin(ct) \sin(ct+ch) + Z_{t+h}Z_{t-1}\cos(ct+c)\sin(ct) + Z_{t+h-1}Z_{t}\cos(ct)\sin(ct+ch)] = 0 \] 
+
+
+#(d)
+$X_t = a+bZ_0$
+
+Conjecture: $X_t \sim^{iid} N(a, b^2\sigma^2)$ so it should be stationary.
+
+Let us check the mean and covariances, though;
+
+We would have the mean of $\mathbb{E}[X_t] =  a +  b \mathbb{E}[Z_0] =  a$, which does not depend on t.
+
+For covariances:
+\[
+\gamma_X(h) =  \mathbb{E}[X_{t+h}X_t] - \mathbb{E}[X_{t+h}]\mathbb{E}[X_{t}] = \mathbb{E}[(a+bZ_0)^2] - a^2 = a^2 + \mathbb{E}[2abZ_0] + \mathbb{E}[b^2Z_0^2] - a^2
+\]
+\[
+= 2ab\mathbb{E}[Z_0] + b^2\mathbb{E}[Z_0^2] = 0 + b^2 \sigma^2 = b^2\sigma^2
+\]
+
+It does not depend on t for arbitrary (therefore any) h. Thus the sequence is stationary.
+
+#(e)
+$X_t = Z_0 \cos(ct)$
+The mean would be
+\[
+\mathbb{E}[X_t] =  \cos(ct)\mathbb{E}[Z_0] = 0
+\]
+
+It does not depend on t.
+
+Let us check the covariances now: for 
+\[
+\gamma_X(h) = \mathbb{E}[X_{t+h}X_{t}] = \mathbb{E}[\{Z_0 \cos(c(t+h))\}\{Z_0 \cos(ct)\}] = \mathbb{E}[Z_0^2 cos(c(t+h))cos(ct)]
+\]
+
+\[
+=  cos(c(t+h))cos(ct)\mathbb{E}[Z_0^2] = cos(c(t+h))cos(ct)\sigma^2 
+\]
+
+We have two cases:
+If $c=\frac{(2k+1)}{2}\pi$ for some $k \in \mathbb{Z}$, then either $cos(ct) = 0$ or $cos(c(t+h))$ thus the covariance function is zero. Thus it becomes stationary.
+Otherwise it depends on t. Thus the sequence is not stationary.
+
+#(f)
+$X_t = Z_t Z_{t-1}$
+The mean would be 
+\[
+\mathbb{E}[X_t] =  \mathbb{E}[Z_t Z_{t-1}] = \mathbb{E}[Z_t] \mathbb{E}[Z_{t-1}] = 0 \times 0 = 0
+\]
+
+So it does not depend on t.
+
+It would have the variance
+\[
+\mathrm{Var}[X_t] = \mathbb{E}[X_t^2] = \mathbb{E}[Z_t^2 Z_{t-1}^2] 
+\]
+
+due to independence,
+\[
+= \mathbb{E}[Z_t^2]\mathbb{E}[Z_{t-1}^2] =  \sigma^2 \times \sigma^2 = \sigma^4 
+\]
+
+For other cases, if $h=1$,
+\[
+\mathrm{Cov}(X_{t+h}, X_t) = \mathbb{E}[X_{t+h}X_t] = \mathbb{E}[Z_{t+1}Z_{t}Z_{t}Z_{t-1}] =  \mathbb{E}[Z_{t+1}]\mathbb{E}[Z_{t}^2]\mathbb{E}[Z_{t-1}] = 0 \times \sigma^2 \times 0 = 0
+\]
+Otherwise,
+\[
+\mathrm{Cov}(X_{t+h}, X_t) = \mathbb{E}[X_{t+h}X_t] = \mathbb{E}[Z_{t+h}]\mathbb{E}[Z_{t+h-1}]\mathbb{E}[Z_{t}]\mathbb{E}[Z_{t-1}] = 0 
+\]
+Thus the sequence is stationary.
+\newpage
+##2
+\emph{Question 2}
+
+Let $Z_t$ be iid $N(0,1)$ noise and define:
+
+\[
+X_t := \begin{cases}Z_t \text{  if t even}\\
+\frac{Z^2_{t-1}-1}{\sqrt{2}}\ \ \ \text{if t is odd}\end{cases}
+\]
+
+a) Show that $\{X_t\}$ is  $WN(0,1)$, but not $iid (0,1)$ noise.
+\texttt{Solution}
+\texttt{Showing it has mean 0}
+\[
+\mathbb{E}[X_t]  \begin{cases} \mathbb{E}[Z_t] = 0 \text{  if t even}\\
+\mathbb{E}[\frac{Z^2_{t-1}-1}{\sqrt{2}}] = \frac{\mathbb{E}[Z^2_{t-1}]-1}{\sqrt{2}} = \frac{1-1}{\sqrt{2}} = 0\ \ \ \text{if t is odd}\end{cases}
+\]
+
+\texttt{Showing the variance 1} Since the mean is zero, the variance will just be the second moments.
+Remember  if $Y \sim N(0,1)$ then $Y^2 \sim \chi^2_1$ with mean 1 and variance 2. so $\mathbb{E}[Y^4] =  \mathrm{Var}(Y^2) + (\mathbb{E}[Y^2])^2 = 2 + 1 =  3$
+\[
+\mathbb{E}[X_t^2] =  \begin{cases} \mathbb{E}[Z_t^2] = 1 \text{  if t even}\\
+\mathbb{E}[(\frac{Z^2_{t-1}-1}{\sqrt{2}})^2] = \frac{\mathbb{E}[Z^4_{t-1}-2Z^2_{t-1}+1]}{2} = \frac{3 - 2 +1}{2} = \frac{2}{2} = 1\ \ \ \text{if t is odd}\end{cases}
+\]
+
+\texttt{$X_t$'s are uncorrelated}
+
+\[
+\mathrm{Cov}(X_{t+h}, X_t) = \mathbb{E}[X_{t+h}X_t] = \gamma_X(h)
+\]
+(WLOG we assume $h \geq 0$; if $h \leq 0$ we reindex)
+we have already visited the cases where $h=0$
+if $h \neq 0$
+\[
+\mathrm{Cov}(X_{t+h}, X_t) = \mathbb{E}[X_{t+h}X_t]
+\]
+A. if h is even, we would have two cases
+1. t is even; it follows that t+h is also even.
+\[
+X_t = Z_t \text{ and } X_{t+h} = Z_{t+h}
+\]
+and $\{Z_t\}$ is an iid standard normal noise. Due to independence
+\[
+\mathbb{E}[X_{t+h}X_t] = \mathbb{E}[X_{t+h}]\mathbb{E}[X_t]  = 0 \times 0 = 0
+\]
+
+2. t is odd; it follows that t+h is also odd.
+\[
+X_t = \frac{Z_{t-1}^2-1}{\sqrt{2}} \text{ and } X_{t+h} = \frac{Z^2_{t+h-1}-1}{\sqrt{2}}
+\]
+and due to independence of $\{Z_t\}$
+\[
+\mathbb{E}[X_{t+h}X_t] = \mathbb{E}[X_{t+h}]\mathbb{E}[X_t] = \mathbb{E}[\frac{Z_{t-1}^2-1}{\sqrt{2}}] \mathbb{E}[\frac{Z_{t+h-1}^2-1}{\sqrt{2}}] = \frac{\mathbb{E}[Z_{t-1}^2]-1}{\sqrt{2}}\frac{\mathbb{E}[Z_{t+h-1}^2]-1}{\sqrt{2}}
+\]
+
+where $\mathrm{Var}[Z_{t}] = \mathbb{E}[Z_{t}^2] = 1$, thus
+\[
+\frac{\mathbb{E}[Z_{t-1}^2]-1}{\sqrt{2}}\frac{\mathbb{E}[Z_{t+h-1}^2]-1}{\sqrt{2}} =  \frac{1-1}{\sqrt{2}}\frac{1-1}{\sqrt{2}} = 0 \times 0 = 0
+\]
+
+B. If h is odd.
+If t is even, then t+h will be odd, and if t is odd then t+h will be even. In other words, in this case autocovariance function would have the form of $\mathrm{Cov}(X_t, X_t+h)$ where t is even and s is odd ( WLOG  ).
+\[
+\mathbb{E}[X_tX_s] = \mathbb{E}[Z_t*(\frac{Z_{t+h-1}^2-1}{\sqrt{2}}) ]
+\]
+if $h > 1$, $X_t$ and $X_s$ are independent. Thus 
+\[
+\mathbb{E}[Z_t*(\frac{Z_{t+h-1}^2-1}{\sqrt{2}})] = \mathbb{E}[Z_t]*\mathbb{E}[(\frac{Z_{t+h-1}^2-1}{\sqrt{2}})] = 0 \times 0 = 0 
+\]
+
+We would have two subcases: where $ h > 1 $ and $h = 1$.
+If $ h = 1 $ and $ s < t$ then $X_t$ and $X_s$ are independent, so we get the same result as above.
+
+Otherwise ($h=1$ and $t < t+1 = s$), we have 
+$X_s = \frac{Z^2_{t}-1}{\sqrt{2}}$. So 
+\[
+\mathbb{E}[Z_t*(\frac{Z_{t}^2-1}{\sqrt{2}})] = \mathbb{E}[\frac{Z_t^3-Z_t}{\sqrt{2}}]
+\]
+\[
+= \frac{1}{\sqrt{2}}\mathbb{E}[Z_t^3-Z_t] = \frac{1}{\sqrt{2}}\mathbb{E}[Z_t^3] - \frac{1}{\sqrt{2}}\mathbb{E}[Z_t]
+\]
+
+We use the moment-generating function 
+\[
+\mathbb{E}[e^{Zt}] = e^{t^2/2}
+\]
+for the standard normal distribution.
+To get the third moment, we differentiate it three times and set t to 0.
+\[
+\frac{\partial^3}{\partial t^3}(e^{t^2/2})|^{t=0} = 0
+\]
+
+This we obtain
+\[
+ \frac{1}{\sqrt{2}}\mathbb{E}[Z_t^3] - \frac{1}{\sqrt{2}}\mathbb{E}[Z_t] = 0-0 = 0
+\]
+
+Thus $X_t \sim WN(0, 1)$
+
+But for all even t
+$X_t$ and $X_{t+1}$ are not independent since $X_{t+1} = \frac{X_t^2-1}{\sqrt{2}}$. $P(X_3 \geq 1 | X_2 \leq 1) = 0 \neq P(X_3 \geq 1)P(X_2 \leq 1)$.
+So it is not an independent sequence.
+
+#b) 
+Find $\mathbb{E}(X_{n+1}|X_1,...,X_n)$ for n odd and n even and compare the results.
+\texttt{Solution}
+##i) If n is odd.
+By construction $X_{n+1} = Z_{n+1} $, in other words we pick a new random sample from standard normal distribution. Because $\{Z_t\}$ is an iid noise, $Z_{n+1}$ is independent with $\{Z_i\}_{i=1}^n$ and thus also independent with $\{X_i\}_{i=1}^n$ since all $X_i \in \{X_i\}_{i=1}^n$ is either a new sample from iid noise or a function of only previous samples. It follows that $P(X_{n+1}| \{X_i\}_{i=1}^n) = P(X_{n+1})$ for all possible cases, thus we would have $\mathbb{E}(X_{n+1}|X_1,...,X_n) = \mathbb{E}[X_{n+1}] = \mathbb{E}[Z_{n+1}] = 0$
+
+##ii) If n is even
+Now let $x_n \in \mathbb{R}$ be a realization of $X_n$
+By construction $X_{n+1} = \frac{Z^2_{n}-1}{\sqrt{2}}$. Thus once $X_n = Z_n =x_n$ is given 
+\[
+X_{n+1}|(X_1, ... , X_n = x_n) = \frac{x_n^2-1}{\sqrt{2}} 
+\] becomes a constant. I.e. we obtain
+\[
+\mathbb{E}[X_{n+1}|X_1, ... , (X_n = x_n)] = \mathbb{E}[\frac{x_n^2-1}{\sqrt{2}}] = \frac{x_n^2-1}{\sqrt{2}}
+\]
+which is not necessarily zero. This could have been used as an another way to show that $\{X_t\}$ is not an iid sequence.
+\[
+\mathbb{E}(X_{n+1}|X_1,...,X_n = x_n) = \mathbb{E}[\frac{x_n^2-1}{\sqrt{2}}] \]
+\newpage
+##3.
+\emph{Question 3}
+Define $\mathrm{P}_k[x]$ be set of all polynomials up to degree k. We use the fact that it is a vector space spanned by 
+\[
+\{1, t, t^2, ... , t^k\}
+\]
+
+Let $$m_t = \sum_{k=0}^p c_k p^k$$. Show that $$\nabla m_t := (1-B)m_t = m_t - m_{t-1} \in \mathrm{P}_{p-1}[x]$$. and $\nabla^{p+1}m_t = 0$
+
+\texttt{Solution} We prove by induction on p.
+\texttt{Base case} $p=1$ Let
+\[ 
+m_t = c_0 + c_1 t
+\]
+\[
+\implies \nabla m_t = m_t - m_{t-1} = c_0 + c_1 t - (c_0 + c_1 (t-1)) = 
+\]
+\[
+c_0 - c_0 + c_1 t - c_1t + c_1 = c_1
+\]
+which is a polynomial of zero degree.
+
+\texttt{Inductive step} Assume it holds for $m_t$ with degree p for some $p \in \mathbb{N}$.
+For $p+1$: 
+\[
+m_t = \sum_{k=0}^{p+1} c_kt^k = \sum_{k=0}^p c_k t^k + c_{p+1}t^{p+1}
+\]
+\[
+m_{t-1} =  \sum_{k=0}^{p+1} c_k(t-1)^k = \sum_{k=0}^p c_k (t-1)^k + c_{p+1}(t-1)^{p+1}
+\]
+By binomial theorem,
+\[
+c_{p+1}(t-1)^{p+1} = c_{p+1}\sum_{k=0}^{p+1} {p+1\choose k} (-1)^{p+1-k}t^k = c_{p+1} {p+1 \choose p+1} (-1)^0 t^{p+1}\]
+\[
++ c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k = c_{p+1}t^{p+1} + c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k
+\]
+\[
+\nabla m_t = m_t -  m_{t-1} =  \sum_{k=0}^{p+1} c_kt^k -  \sum_{k=0}^{p+1} c_k(t-1)^k = \sum_{k=0}^p c_k t^k + c_{p+1}t^{p+1} - ( c_{p+1}t^{p+1} + c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k +  \sum_{k=0}^p c_k (t-1)^k)
+\]
+\[
+= \sum_{k=0}^p c_k t^k + c_{p+1}t^{p+1} - c_{p+1}t^{p+1} -( c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k +  \sum_{k=0}^p c_k (t-1)^k) 
+\]
+\[
+ \sum_{k=0}^p c_k t^k  -( c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k +  \sum_{k=0}^p c_k (t-1)^k) 
+\]
+And since
+\[
+ \sum_{k=0}^p c_k t^k,\    c_{p+1}\sum_{k=0}^{p} {p+1\choose k} (-1)^{p+1-k}t^k ,\   \sum_{k=0}^p c_k (t-1)^k) \in \mathrm{P}_{p}[x] 
+\]
+and $\mathrm{P}_{p}[x]$ is a vector space, it follows that
+\[
+\nabla m_t \in \mathrm{P}_{p}[x]
+\]
+Showing that it is a polynomial of degree at most p. Thus through recursive process we get $\nabla^{p+1}m_t = 0$
+
+\newpage
+##4.
+\emph{Question 4}
+Let $\{Y_t\}$ be a stationary process with mean zero and with arbitrary covariance function $\gamma_Y(h)$ with $a, b \in \mathbb{R}$.
+
+#a)
+if 
+\[
+X_t = a+bt + s_t + Y_t
+\]
+where $s_t$ is the seasonal component with period 12 (i.e. $s_{t+12} = s_t$) $\forall t$. Show that 
+\[
+W_t := \nabla \nabla_{12} X_t =(1-B)(1-B^{12})X_t
+\]
+is stationary and express its autocovariance function in terms of $\gamma_Y(h)$.
+
+\texttt{Solution.}
+
+\[
+W_t = (1-B)(1-B^{12})X_t =  (1-B)(1-B^{12})(a+bt + s_t + Y_t) = 
+\]
+\[
+(1-B)\{(a+bt + s_t + Y_t) - (a+b(t-12) + s_{t-12} + Y_{t-12})\} = (1-B)(12b  + s_t - s_{t-12} + Y_t - Y_{t-12} )\]
+Since $s_t = s_{t-12}$, we have
+\[
+= (1-B)(12b + Y_t - Y_{t-12}) = (12b- 12b + Y_t - Y_{t-12} - Y_{t-1} + Y_{t-13}) = Y_t - Y_{t-12} - Y_{t-1} + Y_{t-13}
+\]
+
+will have mean zero, 
+\[
+\mathbb{E}[Y_t - Y_{t-12} - Y_{t-1} + Y_{t-13}] = \mathbb{E}[Y_t] - \mathbb{E}[Y_{t-12}] - \mathbb{E}[Y_{t-1}] + \mathbb{E}[Y_{t-13}] = 0 - 0 - 0 + 0 = 0 
+\]
+suggesting that the covariances become the second moment of the terms in our sequence.
+
+Now we will look at covariances (which is, in fact, the autocovariance functions)
+
+\[
+\mathbb{E}[(Y_{t+h} - Y_{t+h-12} - Y_{t+h-1} + Y_{t+h-13}))(Y_t - Y_{t-12} - Y_{t-1} + Y_{t-13})] =
+\]
+
+\[
+= \mathbb{E}[Y_{t+h}Y_{t} - Y_{t+h}Y_{t-1} - Y_{t+h}Y_{t-12} + Y_{t+h}Y_{t-13} ] + \]
+\[
+\mathbb{E}[- Y_{t+h-1}Y_{t} + Y_{t+h-1}Y_{t-1} + Y_{t+h-1}Y_{t-12} - Y_{t+h-1}Y_{t-13}] + \]
+\[
+\mathbb{E}[- Y_{t+h-12}Y_{t} + Y_{t+h-12}Y_{t-1} + Y_{t+h-12}Y_{t-12} - Y_{t+h-12}Y_{t-13}]  + \]
+\[
+\mathbb{E}[Y_{t+h-13}Y_{t} - Y_{t+h-13}Y_{t-1} - Y_{t+h-13}Y_{t-12} + Y_{t+h-13}Y_{t-13}] =
+\]
+\[
+= \mathbb{E}[Y_{t+h}Y_{t}] - \mathbb{E}[Y_{t+h}Y_{t-1}] - \mathbb{E}[Y_{t+h}Y_{t-12}] + \mathbb{E}[Y_{t+h}Y_{t-13} ] + \]
+\[
+- \mathbb{E}[ Y_{t+h-1}Y_{t}] + \mathbb{E}[Y_{t+h-1}Y_{t-1}] + \mathbb{E}[Y_{t+h-1}Y_{t-12}] - \mathbb{E}[Y_{t+h-1}Y_{t-13}] + \]
+\[
+\mathbb{E}[- Y_{t+h-12}Y_{t}] + \mathbb{E}[Y_{t+h-12}Y_{t-1}] + \mathbb{E}[Y_{t+h-12}Y_{t-12}] - \mathbb{E}[Y_{t+h-12}Y_{t-13}]  + 
+\]
+\[
+\mathbb{E}[Y_{t+h-13}Y_{t}] - \mathbb{E}[Y_{t+h-13}Y_{t-1}] - \mathbb{E}[Y_{t+h-13}Y_{t-12}] + \mathbb{E}[Y_{t+h-13}Y_{t-13}] = \]
+
+\[
+\gamma_Y(h) - \gamma_Y(h+1) - \gamma_Y(h+12) + \gamma_Y(h+13) 
+\]
+\[- \gamma_Y(h-1) + \gamma_Y(h) + \gamma_Y(h+11) - \gamma_Y(h+12) 
+- \gamma_Y(h-12) + \gamma_Y(h-11) + \gamma_Y(h) - \gamma_Y(h+1)
+\]
+\[+ \gamma_Y(h-13) - \gamma_Y(h-12) - \gamma_Y(h-1) + \gamma_Y(h) = \]
+\[
+4\gamma_Y(h)- 2\gamma_Y(h+1) -2 \gamma_Y(h-1) - 2 \gamma_Y(h+12) - 2\gamma_Y(h-12) + \gamma_Y(h+13) - \gamma_Y(h-13) + \gamma_Y(h+11) \gamma_Y(h-11)
+\]
+This shows that the covariance does not depend on t, since none of $\gamma_Y(h)$ depends on t and therefore their linear combination will also not depend on t.
+Thus $\{W_t\}$ is stationary.
+
+#b)
+Suppose $\{X_t\} = (a+bt)s_t + Y_t$ where $s_t$ is just as the same as defined above with period 12 (i.e. $s_{t+12} = s_t$ $\forall t$).
+
+Show that 
+\[
+V_t = \nabla^2_{12} X_t = (1-B^{12})^2X_t
+\]
+is stationary and express its autocovariance function in terms of $\gamma_Y(h)$
+
+\texttt{Solution.}
+\[
+V_t = (1-B^{12})^2X_t = (1-2B^{12}+B^{24})X_t = X_t - 2X_{t-12} + X_{t-24}
+\]
+\[
+= (a+bt)s_t + Y_t - 2\{(a+b(t-12)s_{t-12} + Y_{t-12}\} + \{(a+b(t-24)s_{t-24} + Y_{t-24}\}
+\]
+We recognize the fact that $s_t = s_{t-12} = s_{t-24}$ provided that they exist. Thus,
+\[
+(a+bt)s_t + Y_t - 2\{(a+b(t-12)s_{t} + Y_{t-12}\} + \{(a+b(t-24)s_{t} + Y_{t-24}\} = 
+\]
+\[
+as_t -2as_t + as_t + bts_t -2bts_t +24bs_t+ bts_t -24bs_t + Y_t -2Y_{t-12} + Y_{t-24} =
+\]
+\[
+= 0 + 0 + 0 + 0 + Y_t -2Y_{t-12} + Y_{t-24} = Y_t -2Y_{t-12} + Y_{t-24}
+\]
+.
+Now, we can see that $V_t$ has mean zero
+\[
+\mathbb{E}[V_t] =  \mathbb{E}[Y_t -2Y_{t-12} + Y_{t-24}] = \mathbb{E}[Y_t] -2\mathbb{E}[Y_{t-12}] + \mathbb{E}[Y_{t-24}] = 0
+\]
+And following that we can show its autocovariance function,  being the second moment :
+\[
+\mathbb{E}[V_{t+h}V_t] = \mathbb{E}[(Y_{t+h} -2Y_{t+h-12} + Y_{t+h-24})(Y_t -2Y_{t-12} + Y_{t-24})] =
+\]
+\[
+\mathbb{E}[Y_{t+h}Y_{t}] - 2\mathbb{E}[Y_{t+h}Y_{t-12}] + \mathbb{E}[Y_{t+h}Y_{t-24}]
+\]
+\[
+ -2 \mathbb{E}[Y_{t+h-12}Y_{t}] + 4\mathbb{E}[Y_{t+h-12}Y_{t-12}] -2 \mathbb{E}[Y_{t+h-12}Y_{t-24}] 
+\]
+\[
++ \mathbb{E}[Y_{t+h-24}Y_{t}] -2 \mathbb{E}[Y_{t+h-24}Y_{t-12}] + \mathbb{E}[Y_{t+h-24}Y_{t-24}]
+\]
+\[
+= \gamma_Y(h) -2\gamma_Y(h+12) + \gamma_Y(h+24) -2 \gamma_Y(h-12) +4 \gamma_Y(h) -2\gamma_Y(h+12) + \gamma_Y(h-24) -2 \gamma_Y(h-12)+ \gamma_Y(h)
+\]
+\[
+6\gamma_Y(h) -4 \gamma_Y(h+12) -4 \gamma_Y(h-12) +\gamma_Y(h+24) +\gamma_Y(h-24)
+\]
+
+Showing that the autocovariance function of $\{V_t\}$ is also not dependent on t. Thus $V_t$ is also stationary.
+\newpage
+##5.
+\emph{Question 5}
+The dataset in the file “AusBeer.csv” (attached to the assignment folder) contains data on monthly Australian beer production from 1956 to 1995, measured in megalitres. You can set it up for analysis with the following code (assuming all packages have been properly installed and the data are in the correct directory):
+
+Analyse the attached data and determine whether you can detect
+a) a trend with time;
+b) seasonal variation (based on an appropriate period)
+If you detect either of these two features, remove them and assess the residuals for stationarity.
+
+\texttt{Solution.}
+
+We will take an analogous approach to the codes provided on MyCourses with some additional features.
+
+```{r}
+setwd("~/Documents/MATH 204/Working Dir")
+library(tidyverse) 
+library(itsmr) 
+library(forecast) 
+library(tibbletime) 
+library(tsbox) 
+library(gridExtra)
+australian_beer = read_csv("AusBeer.csv") 
+head(australian_beer)
+tail(australian_beer)
+dim(australian_beer)
+class(australian_beer)
+Aus <- ts_df(australian_beer)
+```
+Let's plot our date first:
+```{r}
+#Plot data points
+ggplot(Aus,aes(x=Date,y=Production)) + geom_point(size=0.5) + ylab("Beer Production") +
+  ggtitle("Beer production in Australia (1956-1995)") + xlab("Date")
+#Plot a curve
+ggplot(Aus,aes(x=Date,y=Production)) + geom_line() + ylab("Beer Production") +
+  ggtitle("Beer production in Australia (1956-1995)") + xlab("Date")
+ggAcf(ts(australian_beer %>% pull(Production),start=1,end=476))
+```
+And we shall fit a linear trend
+```{r}
+Aus_tbl <- as_tbl_time(Aus,index=Date)
+Aus_tbl <- Aus_tbl %>% mutate(Aus_lin=trend(Production,p=1)) ## Linear trend
+
+
+
+Aus_tbl = Aus_tbl %>% mutate(lin_residuals = Production - Aus_lin)
+```
+
+We will fit the linear trend for the production level first, and then will check whether it was a good fit using residuals for both the model assuming a linear trend and another assuming a quadratic trend.
+```{r}
+ggplot(Aus_tbl,aes(x=Date,y=Production))+ geom_line() + geom_point()+ geom_line(aes(y=Aus_lin),color="blue")+ylab("Production level") +
+  ggtitle("Beer production (1956-1995)") + xlab("Year")
+ggplot(Aus_tbl,aes(x=Date,y=lin_residuals))+ 
+  geom_line() + 
+  geom_point()+ 
+  geom_hline(yintercept=0,color="red") +
+  ylab("Detrended production level (linear trend)") +
+  ggtitle("Beer production (1956-1995)") + xlab("Year")
+```
+
+
+The visual inspection suggests there exists a positive trend that can be roughly explained by a linear trend (but later it shows that without assuming seasonality the quadratric trend seems to be a better one).
+
+
+
+```{r}
+#quadratic trend?
+Aus_tbl <- Aus_tbl %>% mutate(Aus_quad=trend(Production,p=2))
+Aus_tbl <- Aus_tbl %>% mutate(quad_residuals = Production - Aus_quad)
+ggplot(Aus_tbl,aes(x=Date,y=Production))+ geom_line() + geom_point()+ geom_line(aes(y=Aus_quad),color="blue")+ylab("Production level") +
+  ggtitle("Beer production (1956-1995)") + xlab("Year")
+ggplot(Aus_tbl,aes(x=Date,y=quad_residuals))+ 
+  geom_line() + 
+  geom_point()+ 
+  geom_hline(yintercept=0,color="red") +
+  ylab("Detrended production level (quad trend)") +
+  ggtitle("Beer production (1956-1995)") + xlab("Year")
+```
+```{r}
+p_lin = ggAcf(ts(Aus_tbl %>% pull(lin_residuals),start=1956,end=1995)) + ggtitle("ACF after Linear Trend") + ylim(c(-0.25,0.8))
+p_lin
+p_quad =  ggAcf(ts(Aus_tbl %>% pull(quad_residuals),start=1956,end=1995)) + ggtitle("ACF after quad Trend") + ylim(c(-0.25,0.8))
+p_quad
+```
+```{r}
+ggplot(Aus_tbl %>% mutate(production_lag1 = lag(Production,n=1)) %>% 
+         slice(2:n()), aes(x=production_lag1,y=Production)) + 
+  geom_point() + xlab(expression(X[t-1])) + ylab(expression(X[t])) + 
+  ggtitle(expression(X[t-1]~"vs"~X[t]))
+```
+Setting ARIMA models:
+```{r}
+Aus_AR1 = arima(ts_ts(Aus_tbl %>% select(Date,Production)),order=c(1,0,0))
+print(Aus_AR1)
+Aus_tbl = Aus_tbl %>% mutate(AR1_resid = residuals(Aus_AR1))
+
+ggplot(Aus_tbl,aes(x=Date,y=AR1_resid)) + geom_line() + geom_hline(yintercept=0)
+p_ar1 = ggAcf(ts_ts(Aus_tbl %>% select(Date,AR1_resid))) + ylim(c(-0.25,0.8))+ ggtitle("ACF for after AR(1)")
+p_ar1
+```
+```{r}
+Aus_AR2 = arima(ts_ts(Aus_tbl %>% select(Date,Production)),order=c(2,0,0))
+print(Aus_AR2)
+Aus_tbl = Aus_tbl %>% mutate(AR2_resid = residuals(Aus_AR2))
+
+ggplot(Aus_tbl,aes(x=Date,y=AR2_resid)) + geom_line() + geom_hline(yintercept=0)
+p_ar2 = ggAcf(ts_ts(Aus_tbl %>% select(Date,AR2_resid))) + ylim(c(-0.25,0.8))+ ggtitle("ACF for after AR(2)")
+p_ar2
+```
+
+```{r}
+ggplot(Aus_tbl %>% select(Date,lin_residuals,quad_residuals,AR1_resid,AR2_resid) %>% 
+         gather(key=Type,value=Residuals,-Date),aes(x=Date,y=Residuals,col=Type)) + geom_line() + geom_hline(yintercept=0)
+```
+
+```{r}
+ggplot(Aus_tbl %>% select(Date,lin_residuals,quad_residuals,AR1_resid,AR2_resid) %>% 
+         gather(key=Type,value=Residuals,-Date),aes(x=Date,y=Residuals,col=Type)) + geom_line() + facet_grid(~Type) + geom_hline(yintercept=0)
+
+```
+Both Arima models show some tendendcy of heteroscedasticity. The model assuming a linear trend strongly suggests the seasonal component. The model assuming a quadratic trend makes effect of the seasonal component less pronounced.
+```{r}
+
+
+grid.arrange(p_lin,p_quad, p_ar1,p_ar2,ncol=2)
+```
+We can notice that both arima models bring the values of auto covariance function inside the confidence interval besides at every period of 12 (suggesting the existence of seasonal component).
+
+```{r}
+Aust_ts = ts_ts(australian_beer)
+Aust_df = ts_df(australian_beer) %>% rename(Month = Date,
+                                             Prod= Production)
+Aust_tbl = as_tbl_time(Aust_df, index = Month)
+
+ggplot(Aust_tbl, aes(x=Month, y=Prod)) + geom_line()
+```
+```{r}
+library(TTR)
+trend_comp = ts_df(SMA(Aust_ts,n=12)) %>% rename(Month=time,SMA_12=value)
+print(trend_comp)
+print(australian_beer)
+
+Aust_tbl  =  full_join(Aust_tbl,trend_comp) %>%
+                    mutate(SMA_resid=Prod-SMA_12)
+ggplot(Aust_tbl,aes(x=Month,y=Prod)) + geom_line() + 
+  geom_line(aes(y=SMA_12),color="blue") 
+```
+```{r}
+ggplot(Aust_tbl,aes(x=Month,y=SMA_resid)) + geom_line(col="red")
+```
+```{r}
+SMA_resid_ts = ts(Aust_tbl%>% filter(!is.na(SMA_resid)) %>% pull(SMA_resid), 
+   start=c(1956,12),frequency=12)
+   
+      season_comp = season(SMA_resid_ts,d=12)
+
+SMA_resid_tbl = ts_df(SMA_resid_ts) %>% rename(Month=time,
+                                               SMA_resid=value) %>% 
+                  mutate(seasonal = season_comp) %>% as_tbl_time(index=Month)
+
+Aust_tbl = full_join(Aust_tbl,SMA_resid_tbl)
+
+Aust_tbl = Aust_tbl %>% mutate(deseason=Prod-seasonal)
+
+
+ggplot(Aust_tbl,aes(x=Month,y=Prod)) + geom_line() + 
+  geom_line(aes(y=deseason),color="blue") 
+```
+```{r}
+deseason_ts = ts(Aust_tbl %>% filter(!is.na(deseason)) %>% pull(deseason),
+                 start=c(1956,12),frequency=12)
+
+deseason_trend = ts_df(SMA(deseason_ts,n=5)) %>% rename(Month=time,de_SMA_5 = value)
+
+Aust_tbl = full_join(Aust_tbl,deseason_trend)
+
+## Joining, by = "Month"
+
+Aust_tbl = Aust_tbl %>% mutate(Final_resid=Prod-de_SMA_5-seasonal)
+
+ggplot(Aust_tbl,aes(x=Month,y=Prod)) +geom_line(alpha=0.1) + geom_line(aes(y=deseason),color="blue",alpha=0.5) + geom_line(aes(y=de_SMA_5),color="purple")
+```
+```{r}
+ggplot(Aust_tbl,aes(x=Month,y=Final_resid)) + geom_line()
+```
+
+```{r}
+ggAcf(ts(Aust_tbl %>% pull(Prod), start=c(1956,12), freq=12))
+```
+
+
+```{r}
+ggplot(Aust_tbl,aes(x=Month,y=Final_resid)) + geom_line()
+```
+```{r}
+ggAcf(ts(Aust_tbl %>% pull(Final_resid), start=c(1956,12),freq=12))
+```
+
+The acf plot suggests that residuals seems quite stationary. It is something additional, but we might conduct a statistical test.
+```{r}
+library(aTSA)
+# ADF test for the residual
+
+adf.test(Aust_tbl$Final_resid)
+```
+It seems that we can reject the null, suggesting that the series is stationary.

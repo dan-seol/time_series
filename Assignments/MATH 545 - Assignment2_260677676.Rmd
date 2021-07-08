@@ -1,0 +1,532 @@
+---
+title: "MATH 545 - Assignment 2 - 260677676"
+author: "Dan Yunheum Seol"
+date: '2018-10-14'
+output:
+  word_document: default
+  pdf_document: default
+---
+#2.2
+
+Show that the process
+\[
+X_t = A cos(wt) + B sin(wt)
+\]
+
+where A and B are independent random variables with mean zero and variance 1.
+Show that it is stationary and thus function $cos(wt)$ is non-negative definite.
+
+##Solution.
+###. X_t is stationary.
+We have
+\[
+E[X_t] = E[ A cos(wt) + B sin(wt)] = E[ A cos(wt)] +E[B sin(wt)] = 0+0 = 0
+\]
+
+and autocovariance
+\[
+E[X_{t+h}X_t] = E[(\ A cos(w(t+h)) + B sin(w(t+h))\ )(\ A cos(wt) + B sin(wt)\ )]
+\]
+\[
+=E[A^2cos(w(t+h))cos(wt) + B^2sin(w(t+h))sin(wt) +AB(sin(w(t+h))cos(wt)+sin(wt)cos(w(t+h)))]\]
+\[= E[A^2cos(w(t+h))cos(wt) ] + E[B^2sin(w(t+h))sin(wt)] + E[AB(sin(w(t+h))cos(wt)+sin(wt)cos(w(t+h)))]
+\]
+\[
+= E[A^2cos(w(t+h))cos(wt) ] + E[B^2sin(w(t+h))sin(wt)] + 0 = cos(w(t+h))cos(wt) + sin(w(t+h))sin(wt)
+\]
+Using the identity 
+\[
+cos(a -b) = cos(a)cos(b) + sin(a)sin(b)
+\]
+
+We obtain
+\[
+E[X_{t+h}X_t] = cos(w(t+h))cos(wt) + sin(w(t+h))sin(wt) = cos(w((t+h)-h)) = cos(wh)
+\]
+Thus being independent of t. $X_t$ is stationary.
+
+###. cos(wh) is non-negative definite.
+From class we learned that a real-valued function is non-negative definite if and only if the function is a autocovariance function of a stationary process. Since $cos(wh)$ is the ACVF of the stationary process $X_t$, the function is non-negative definite.
+
+#2.9
+
+
+
+#2.13
+Given:
+ 
+ - We have 100 samples.
+ 
+ - $\widehat{\rho}(1) = 0.438$ and  $\widehat{\rho}(2) = 0.145$
+ 
+ Construct a 95% Confidence interval for 
+ 
+ a. Assuming the data is from AR(1) and check whether it stays consistent with the assumption $\phi = 0.8$
+ b. Assuming the data is from MA(1) and check whether it stays consistent with the assumption $\theta = 0.6$
+ We have a special case of Bartlett's formula 
+ \[
+ w_{ii} = \sum_{k=1}^{\infty}\{\rho(i+k)+\rho(i-k)+2\rho(i)\rho(k)\}^2
+ \]
+##a.
+It turns out that (from using the formula in textbook example 2.4.4) under the assumption
+\[
+w_{11} = \frac{(1-\phi^2)(1+\phi^2)}{(1-\phi^2)} - 2\phi^2 = 1 -\phi^2 = 1- 0.8^2
+\]
+and
+\[
+w_{22} = \frac{(1-\phi^4)(1+\phi^2)}{1-\phi^2} - 4\phi^4  = (1+\phi)^2 - 4\phi^4 =(1.8)^2 - 4*0.8^4
+\]
+
+And now we use the The formula to construct the confidence interval 
+\[
+(\widehat{\rho}(i) - \frac{1.96}{10}w_{ii},\  \widehat{\rho}(i) + \frac{1.96}{10}w_{ii})
+\]
+Under the assumption, $\rho(1) = \phi$, so the interval constructed for $\widehat{\rho}(1)$ needs to include 0.8, the interval constructed for $\widehat{\rho}(2)$ needs to include $0.8^2$
+```{r}
+#95% CI for AR(1) model
+rho_1 = 0.438
+rho_2 = 0.145
+phi = 0.8
+sqw11.a = sqrt(1- 0.8^2)
+sqw22.a = sqrt((1+0.8^2)^2- 4* 0.8^4)
+rh1AR.CI <- c(rho_1-1.96/10*sqw11.a, rho_1+1.96/10*sqw11.a)
+rh2AR.CI <- c(rho_2-1.96/10*sqw22.a, rho_2+1.96/10*sqw22.a)
+rh1AR.CI
+rh2AR.CI
+(rh1AR.CI[1] < phi && phi < rh1AR.CI[2])
+(rh2AR.CI[1] < phi^2 && phi^2 < rh2AR.CI[2])
+
+```
+It seems that neither of the assumed values is captured by the intervals, so we can conclude that the assumption does not stay consistent with the data.
+##b.
+It turns out that
+\[
+w_{11} = 1 - 3\rho(1)^2 + 4\rho(1)^4
+\]
+and
+\[
+w_{22} = 1 + 2\rho(1)^2
+\]
+so that we can construct the intervals once again symmetrically. Remark that 
+$\rho(1) = \frac{\theta}{1+\theta^2}$ so the first interval needs to capture $\frac{0.6}{1+0.6^2}$ and since MA(1) is 1-correlated process, it follows that
+$\rho(2) = 0$, and consequently the second interval needs to capture 0.
+```{r}
+#95% CI for MA(1) model
+theta = 0.6
+rho <- theta/(1+theta^2)
+w11.b =   (1-3*rho_1^2+4*rho_1^4)
+w22.b = (1+2*rho_1^2)
+rh1MA.CI <- c(rho_1 - 1.96/10 * sqrt(w11.b), rho_1 + 1.96/10 * sqrt(w11.b))
+rh2MA.CI <- c(rho_2 - 1.96/10 * sqrt(w22.b), rho_2 + 1.96/10 *sqrt(w22.b))
+rh1MA.CI
+rh2MA.CI
+(rh1MA.CI[1] < rho  && rho < rh1AR.CI[2])
+(rh2MA.CI[1] < 0 && 0< rh2MA.CI[2])
+
+```
+It seems that both the $\rho(1)$ and $\rho(2)$ value under the assumption are captured by the constructed intervals, thus we can conclude that our data stays consistent with the assumption on $\theta$.
+#2.9
+
+$\{Y_t\}$ is the AR(1) with white noise, i. e.
+
+\[
+Y_t = X_t + W_t
+\]
+
+\[
+X_t = \phi X_{t-1}+Z_t
+\]
+and $W_t \sim WN(0, \sigma^2)$
+and 
+\[
+E[W_sZ_t] = 0
+\]
+for all $s, t$
+
+##a. Prove $\{Y_t\}$ is stationary.
+
+We pick the unique stationary solution for $\{X_t\}$
+\[
+X_t = \sum_{j=0}^{\infty} \phi^j Z_{t-j}
+\]
+where $\{Z_t\} \sim WN(0,\sigma^2)$
+then we have the mean zero
+
+\[
+E[Y_t] =  E[X_t + W_t] = E[X_t] + E[W_t] = E[\sum_{j=0}^{\infty} \phi^j Z_{t-j}] + E[W_t]= \sum_{j=0}^{\infty}\phi^jE[Z_{t-j}] + 0 = 0 + 0 = 0
+\]
+and autocovariance (i.e. the second moment)
+\[
+E[Y_{t+h}Y_t] = E[(X_{t+h}+W_{t+h})(X_t+ W_t)] = E[X_{t+h}X_t + W_{t+h}W_t + X_tW_{t+h}+X_{t+h}W_t] =
+\]
+\[
+E[X_{t+h}X_t] +E[W_{t+h}W_t] + E[X_tW_{t+h}]+E[X_{t+h}W_t] = E[X_{t+h}X_t] +E[W_{t+h}W_t]  + E[\sum_{j=0}^{\infty} \phi^j Z_{t-j}W_{t+h}]+E[\sum_{j=0}^{\infty} \phi^j Z_{t+h-j}W_t]=
+\]
+\[
+E[X_{t+h}X_t] +E[W_{t+h}W_t] = \gamma_X(h) + \gamma_W(h)
+\]
+
+if h = 0
+\[
+\gamma_X(h) + \gamma_W(h) = \gamma_X(h) + \sigma^2
+\]
+and if h $\neq$ 0
+\[
+\gamma_X(h) + \gamma_W(h) = \gamma_X(h) + 0 = \gamma_X(h)
+\]
+Thus it is stationary.
+
+
+##b.
+Show that
+\[
+U_t := Y_t - \phi Y_{t-1}
+\]
+is 1 correlated.
+
+We have
+\[
+E[U_t] = E[Y_t - \phi Y_{t-1}] = E[Y_t] - \phi E[Y_{t-1}] = 0 - 0  = 0
+\]
+
+and
+thus the autocovariance function would be the second moments:
+
+if h= 0
+
+\[
+E[U_t^2] = E[(Y_t - \phi Y_{t-1})^2] = E[Y_t^2 -2 \phi Y_t Y_{t-1} + \phi^2 Y_{t-1}^2] = E[Y_t^2] -2E[\phi Y_t Y_{t-1}] + \phi^2 E[Y_{t-1}^2] = 
+\]
+\[
+\gamma_Y(0)-2\gamma_Y(1) + \phi^2 \gamma_Y(0) = (1+\phi^2)\gamma_Y(0) -2\gamma_Y(1)
+
+\]
+if h=1
+\[
+E[U_{t+1}U_t] =E[(Y_{t+1} - \phi Y_{t})(Y_{t}- \phi Y_{t-1})] =E[Y_{t+1}Y_t -\phi Y_t^2 -\phi Y_{t+1} Y_{t-1} + \phi^2 Y_{t}Y_{t-1} ]
+\]
+by the linearity of expectation,
+\[
+\gamma_Y(1) - \phi \gamma_Y(0) - \phi\gamma_Y(2) +\phi^2 \gamma_Y(1)
+\]
+\[
+(1+\phi^2)\gamma_Y(1) - \phi \gamma_Y(0) - \phi\gamma_Y(2) = 
+\]
+
+\[
+(1+\phi^2)\gamma_X(1) - \phi \gamma_X(0) - \phi\gamma_X(2) 
+\]
+
+
+and finally if $|h| > 1$
+
+\[
+E[U_{t+h}U_t] =  E[(Y_{t+h} - \phi Y_{t+h-1})(Y_{t}- \phi Y_{t-1})] =
+\]
+
+\[
+E[Y_{t+h}Y_t]- \phi E[Y_t Y_{t+h-1}] - \phi E[Y_{t+h}Y_{t-1}] + \phi^2 E[Y_{t+h-1}Y_{t-1}]
+\]
+Now, remember
+\[
+= E[X_{t+h}X_t]- \phi E[X_t X_{t+h-1}] - \phi E[X_{t+h}X_{t-1}] + \phi^2 E[X_{t+h-1}Y_{t-1}]
+\]
+and 
+\[
+E[X_{t+h}X_t] = \frac{\sigma^2 \phi^{|h|}}{1-\phi^2}
+\]
+if h is not zero.
+so
+\[
+\frac{\sigma^2 \phi^{|h|}}{1-\phi^2} - \phi \frac{\sigma^2 \phi^{|h-1|}}{1-\phi^2} - \phi\frac{\sigma^2 \phi^{|h+1|}}{1-\phi^2} + \frac{\sigma^2 \phi^{|h|}}{1-\phi^2}
+\]
+assuming h > 0 (WLOG),
+
+\[
+\frac{\sigma^2 \phi^{h}}{1-\phi^2} - \phi \frac{\sigma^2 \phi^{h-1}}{1-\phi^2} - \phi\frac{\sigma^2 \phi^{h+1}}{1-\phi^2} + \frac{\sigma^2 \phi^{h}}{1-\phi^2}
+\]
+\[
+\frac{\sigma^2 \phi^{h}}{1-\phi^2} - \frac{\sigma^2 \phi^{h}}{1-\phi^2} - \frac{\sigma^2 \phi^{h+2}}{1-\phi^2} + \frac{\sigma^2 \phi^{h+2}}{1-\phi^2} = 0
+\]
+Thus $U_t$ is 1 -correlated.
+
+
+#2.15
+
+Suppose that $\{X_t\}$ with t integers is a stationary process satisfying 
+\[
+X_t = \sum_{i=1}^p\phi_i X_{t-i} + Z_t
+\]
+where $\{Z_t\} \sim WN(0, \sigma^2)$ and $Cov(Z_t, X_s) = 0$ for $\forall s < t$
+Show that
+\[
+P_nX_{n+1} = \sum_{i=1}^p \phi_i X_{n+1-i}
+\]
+is the best linear predictor.
+
+
+##Solution.
+We look at the mean square error that we need to minimize
+\[
+E[(X_{n+1}-P_nX_{n+1})^2] = E[(X_{n+1}-a_0 - \sum_{i=1}^na_i X_{n+1-i})^2]
+\]
+
+We decompose the MSE as follows:
+\[
+E[(X_{n+1}-a_0 - \sum_{i=1}^na_i X_{n+1-i})^2] = E[\{(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i})-a_0 \}^2] = 
+\]
+\[
+E[(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i})^2] - 2a_0E[X_{n+1} - \sum_{i=1}^na_i X_{n+1-i}] + {a_0}^2
+\]
+
+if you differentiate the expression with respect to $a_i$'s and set them to 0, you obtain
+\[
+E[(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i})] = a_0
+\]
+and
+\[
+E[(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i})X_{n+1-i}] = a_0E[X_{n+1-i}] 
+\]
+It follows that
+\[
+
+E[(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i}) X_{n+1-i}] =E[(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i})]  E[X_{n+1-i}] 
+
+\]
+
+implying that 
+\[
+Cov((X_{n+1} - \sum_{i=1}^na_i X_{n+1-i}), X_{n+1-i} ) = 0
+\]
+If we pick the given solution,
+\[
+(X_{n+1} - \sum_{i=1}^na_i X_{n+1-i}) = Z_{n+1}
+\]
+which has mean zero, only leaving MSE of $\sigma^2$ and since $Cov(Z_{n+1}, X_s) = 0$ for $\forall s<n+1$, satisfying the conditions given above. Thus the given solution is the best linear predictor we have.
+#2.21
+Let $X_1, X_2, X_4, X_5$ be observations from the MA(1) model, i.e.
+\[
+X_t = Z_t + \theta Z_{t-1}
+\]
+where $\{Z_t\} \sim \text{WN}(0, \sigma^2)$
+In class we learned:
+\[
+P(Y | \mathbb{W} ) = \mu_Y + a^{T}(W-\mu_W)
+\]
+and 
+\[
+E[(Y - P(Y | \mathbb{W} ) )^2] = \mathrm{Var}[Y] + a^{T}\gamma
+\]
+where the vector $a$ is any solution for
+\[
+\Gamma a  = \gamma
+\]
+with $\Gamma, \gamma$ defined as in class.
+We also know $\forall t$
+\[
+E[X_t] = E[Z_t + \theta Z_{t-1}] =E[Z_t] + \theta E[Z_{t-1}] = 0 + 0 = 0
+\]
+and
+\[
+Var[X_t] = E[X_t^2] = E[Z_t^2 + 2\theta Z_{t-1}Z_t + \theta^2 Z_{t-1}^2] = E[Z_t^2] + 2\theta E[Z_{t-1}Z_t] +\theta^2 E[Z_{t-1}^2] = 
+\]
+\[
+\sigma^2 (1+\theta^2) = \gamma(0)
+\]
+\[
+\gamma(1) = \theta \sigma^2
+\]
+and
+\[
+\gamma(h) = 0  \ \ |h| > 1
+\]
+##a. find P$(X_3 |X_1, X_2)$
+ We have 
+\[
+\Gamma = 
+\left [\begin{matrix}
+\sigma^2(1+\theta^2) & \theta \sigma^2 \\ 
+ \theta \sigma^2 & \sigma^2(1+\theta^2) \\
+\end{matrix} \right ] = \sigma^2 \left [\begin{matrix}
+(1+\theta^2) & \theta \\ 
+\theta & (1+\theta^2) \\
+\end{matrix} \right ]
+\]
+and 
+\[
+\gamma = 
+\left [\begin{matrix}
+0 \\ 
+\theta \sigma^2 \\
+\end{matrix} \right ] = \sigma^2 \left [\begin{matrix}
+0 \\ 
+\theta \\
+\end{matrix} \right ]
+\]
+We must solve for $a$ that satisfies  
+\[\Gamma a =  \gamma 
+\]
+\[
+\implies a = \Gamma^{-1} \gamma
+\]
+Before solving the system, let us simplify the problem a bit
+\[\Gamma a =  \gamma \iff  \sigma^2 \left [\begin{matrix}
+	(1+\theta^2) & \theta \\ 
+	\theta & (1+\theta^2) \\
+\end{matrix} \right ]
+a  = \sigma^2 \left [\begin{matrix}0 \\ 
+\theta \\
+\end{matrix} \right ] \iff \left [\begin{matrix}
+(1+\theta^2) & \theta \\ 
+\theta & (1+\theta^2) \\
+\end{matrix} \right ]
+a  =  \left [\begin{matrix}0 \\ 
+\theta \\
+\end{matrix} \right ] \]
+\[\iff Ga = g \implies a = G^{-1}g 
+\] 
+where $G, g$ are the $\Gamma, \gamma$ with $\sigma^2$ dropped.
+We have
+\[
+G^{-1} = \frac{1}{(1+\theta^2)^2 - \theta^2}\left [\begin{matrix}
+(1+\theta^2) & -\theta \\ 
+-\theta & (1+\theta^2) \\
+\end{matrix} \right ] = \frac{1}{1+\theta^2 + \theta^4}\left [\begin{matrix}
+(1+\theta^2) & -\theta \\ 
+-\theta & (1+\theta^2) \\
+\end{matrix} \right ]
+\]
+\[
+\implies a =  \frac{1}{1+\theta^2 + \theta^4}\left [\begin{matrix}
+(1+\theta^2) & -\theta \\ 
+-\theta & (1+\theta^2) \\
+\end{matrix} \right ]   \left [\begin{matrix}0 \\ 
+\theta \\
+\end{matrix} \right]  = \left [\begin{matrix} \frac{-\theta^2}{1+\theta^2 + \theta^4}\\ 
+ \frac{\theta(1+ \theta^2)}{1+\theta^2 + \theta^4} \\
+\end{matrix} \right]
+\] 
+so the answer would be
+\[
+\mathrm{P}(X_3 |X_1, X_2) =  \frac{-\theta^2}{1+\theta^2 + \theta^4} X_1 +  \frac{\theta(1+ \theta^2)}{1+\theta^2 + \theta^4}X_2
+\]
+##b.  find P$(X_3 |X_4, X_5)$
+We pretty much need to solve the same form of system with the identical $\Gamma$ and a different $\gamma$, so with a different $g$:
+\[
+g = 
+\left[ \begin{matrix} \theta \\ 
+0 \\
+\end{matrix} \right]
+\]
+\[
+\implies  \frac{1}{1+\theta^2 + \theta^4}\left [\begin{matrix}
+(1+\theta^2) & -\theta \\ 
+-\theta & (1+\theta^2) \\
+\end{matrix} \right ]   \left [\begin{matrix}\theta \\ 
+0 \\
+\end{matrix} \right]  = \left [\begin{matrix} \frac{\theta (1+\theta^2)}{1+\theta^2 + \theta^4}\\ 
+\frac{-\theta^2}{1+\theta^2 + \theta^4} \\
+\end{matrix} \right]
+\] 
+so the 
+so we would have 
+\[
+\mathrm{P}(X_3 |X_1, X_2) = \frac{\theta(1+ \theta^2)}{1+\theta^2 + \theta^4}X_4  + \frac{-\theta^2}{1+\theta^2 + \theta^4} X_5 
+\]
+##c.  find P((X_3 |X_1, X_2, X_4, X_5)
+We would need to use a different $\Gamma$ and $\gamma$ this time, dropping sigma, 
+\[ G =
+\left [\begin{matrix}
+(1+\theta^2) & \theta & 0 & 0 \\ 
+\theta & (1+\theta^2) & \theta & 0 \\
+0 & \theta & (1+\theta^2) & \theta \\
+0 & 0 & \theta &  (1+\theta^2)
+\end{matrix} \right ]
+\]
+with 
+\[
+g=
+ \left [\begin{matrix} 0 \\ 
+ \theta \\
+ \theta \\
+ 0
+\end{matrix} \right]
+\]
+
+\[\implies a =\]
+\[
+\frac{1}{(\theta^8 + \theta^6 + \theta^4 + \theta^2 + 1)}*\]
+\[
+\left[
+\begin{matrix}
+(\theta^6 + \theta^4 + \theta^2 + 1) &-(\theta^5 + \theta^3 + \theta)   & (\theta^4 + \theta^2) &  -\theta^3 \\
+-(\theta^5 + \theta^3 + \theta) & (( \theta^2 + 1)*( \theta^4 +  \theta^2 + 1)) &        -( \theta^5 + 2 \theta^3 +  \theta) &  ( \theta^4 +  \theta^2) \\
+ ( \theta^2*( \theta^2 + 1)) & -( \theta*( \theta^2 + 1)^2) & (( \theta^2 + 1)*( \theta^4 +  \theta^2 + 1)) &  -( \theta^5 +  \theta^3 +  \theta) \\
+ - \theta^3 & ( \theta^2*( \theta^2 + 1)) & -( \theta*( \theta^4 +  \theta^2 + 1)) & ( \theta^6 +  \theta^4 +  \theta^2 + 1)
+\end{matrix}
+\right] 
+\]
+\[
+* \left[\begin{matrix}
+0 \\
+\theta \\
+\theta \\
+0
+\end{matrix}\right]
+\]
+\[
+= \frac{1}{(\theta^8 + \theta^6 + \theta^4 + \theta^2 + 1)}\left[\begin{matrix}
+(\theta*(\theta^4 + \theta^2)) - (\theta*(\theta^5 + \theta^3 + \theta))\\
+(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))\\
+(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))- (\theta^2*(\theta^2 + 1)^2) \\
+(\theta^3*(\theta^2 + 1)) - (\theta^2*(\theta^4 + \theta^2 + 1))
+\end{matrix} \right]
+\]
+So we have
+\[
+\mathrm{P}(X_3 |X_1, X_2) =  (\theta*(\theta^4 + \theta^2)) - (\theta*(\theta^5 + \theta^3 + \theta))X_1 + (\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1)) X_2 +
+\]
+\[
+(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))- (\theta^2*(\theta^2 + 1)^2) X_4 +(\theta^3*(\theta^2 + 1)) - (\theta^2*(\theta^4 + \theta^2 + 1))X_5
+\]
+##d. Since we know
+\[
+E[(X_3 - P(X_3 | \mathbb{W} ) )^2] = \mathrm{Var}[X_3] + a^{T}\gamma
+\]
+We have
+\[
+E[(X_3 - P(X_3 | \mathbb{W} ) )^2] = \mathrm{Var}[X_3] + a^{T}\gamma
+\]
+We know that \[ \mathrm{Var}[X_3] = \sigma^2 (1+\theta^2)\] , thus
+
+\[
+E[(X_3 - P(X_3 | X_1, X_2 ) )^2] = \mathrm{Var}[X_3] + a^{T}\gamma =
+\]
+\[
+\sigma^2 (1+\theta^2) + \frac{-\theta^2}{1+\theta^2 + \theta^4}*0 +  \frac{\theta(1+ \theta^2)}{1+\theta^2 + \theta^4} * \theta = \sigma^2 (1+\theta^2) + \frac{\theta^2(1+\theta^2)}{1+\theta^2+\theta^4}
+\]
+
+and symmetrically 
+
+\[
+E[(X_3 - P(X_3 | X_4, X_5 ) )^2] = \sigma^2(1+\theta^2)+ a^{T}\gamma = \sigma^2 (1+\theta^2) + \frac{\theta^2(1+\theta^2)}{1+\theta^2+\theta^4}
+\]
+.
+
+Finally,
+\[
+E[(X_3 - P(X_3 |X_1, X_2, X_4, X_5 ) )^2] = \sigma^2(1+\theta^2)+ \frac{1}{(\theta^8 + \theta^6 + \theta^4 + \theta^2 + 1)}\left[\begin{matrix}
+(\theta*(\theta^4 + \theta^2)) - (\theta*(\theta^5 + \theta^3 + \theta))\\
+(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))\\
+(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))- (\theta^2*(\theta^2 + 1)^2) \\
+(\theta^3*(\theta^2 + 1)) - (\theta^2*(\theta^4 + \theta^2 + 1))
+\end{matrix} \right]^{T} \left[\begin{matrix}
+0 \\ 
+\theta \\
+\theta \\
+0
+\end{matrix} \right]
+\]
+\[
+= \sigma^2(1+\theta^2) + \theta * (\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1)) +\theta\{(\theta*(\theta^2 + 1)*(\theta^4 + \theta^2 + 1))- (\theta^2*(\theta^2 + 1)^2)\}
+\]

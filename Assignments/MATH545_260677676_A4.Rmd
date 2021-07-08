@@ -1,0 +1,266 @@
+---
+title: "MATH545_260677676_A4"
+output: pdf_document
+---
+##260677676 Dan Seol
+```{r}
+library(knitr)
+```
+##5.9
+\\
+Let $\{X_1, ..., X_n\}$ be of AR(p) process ($n > p$), i.e.
+\[
+X_t = \phi_1X_{t-1} + \phi_2X_{t-2} + ... + \phi_pX_{t-p} + Z_t
+\]
+where $\{Z_t\} \sim WN(0, \sigma^2)$
+\\
+Use equation 5.2.9 to show that likelihood is 
+\[
+L(\phi, \sigma^2) = (2\pi\sigma^2)^{-n/2}(det G_p)^{-1/2}*
+\]
+\[
+exp\{\frac{-1}{\sigma^2}[\mathbb{X}_p^TG^{-1}_p\mathbb{X_p}+\sum_{t=p+1}^n(X_t - \phi_1 X_{t-1}- ... -\phi_pX_{t-p})^2]\}
+\]
+where $\mathbb{X}_p = (X_1, ..., X_p)^T$ and $G_p = \frac{1}{\sigma^2}\Gamma_p$
+\textsf{Solution.}
+\\
+We state the equation 5.2.9.
+\[
+L(\phi, \theta, \sigma^2) = \frac{(2\pi\sigma)^{-n/2}}{\sqrt{\prod_{i=0}^n r_{i-1}}}exp\{-\frac{1}{2\sigma^2}\sum_{j=1}^n\frac{(X_j - \hat{X}_j)^2}{r_{j-1}}\}
+\]
+From class we know ($D_n = [v_i]_{i=1}^n$) will be a diagonal matrix
+\[
+\mathbb{X}_n = C_n(\mathbb{X}_n -\hat{\mathbb{X}}_n) 
+\]
+and
+\[
+\Gamma_n = C_n D_nC_n^T
+\]
+finally
+\[
+det(\Gamma_n) = \prod_{i=1}^n v_{i-1} = (\sigma^2)^{n-1} \prod_{i=1}^n r_{i-1}  
+\]
+implying:
+\[
+\mathbb{X}_n^T\Gamma_n^{-1}\mathbb{X}_n = (\mathbb{X}_n-\widehat{\mathbb{X}}_n)C_n^T (C^T_n)^{-1}D_n^{-1}C_n^{-1}C_n(\mathbb{X}_n - \widehat{\mathbb{X}}_n) = (\mathbb{X}_n-\widehat{\mathbb{X}}_n)D_n^{-1}(\mathbb{X}_n - \widehat{\mathbb{X}}_n) = \sum_{i=1}^n\frac{(X_i-\hat{X_i})}{v_{i-1}}^2
+\]
+\[
+= \frac{1}{\sigma^2}\sum_{i=1}^n\frac{(X_i-\hat{X_i})}{r_{i-1}}^2
+\]
+From them we can deduce two following facts:
+\[
+\mathbb{X}_p^TG_p^{-1}\mathbb{X}_p = \sigma^2 \mathbb{X}_p^T\Gamma_p^{-1}\mathbb{X}_p = \sum_{i=1}^p\frac{(X_n-\hat{X_n})}{r_{i-1}}^2
+\]
+\[
+det(G_p) =  (\frac{1}{\sigma^2})^{n-1} det(\Gamma_n) = \prod_{i=1}^n r_{i-1}  
+\]
+And we notice $r_i =1$ for $i > p$ since for $i>p$ $\hat{X_i} = \phi_1X_{i-1}+ ... +\phi_p X_{i-p}$
+Now the equation 5.2.9. can be rewritten as
+\[
+ \frac{(2\pi\sigma)^{-n/2}}{\sqrt{\prod_{i=1}^p r_{i-1}}}exp\{-\frac{1}{2\sigma^2}\sum_{j=1}^p\frac{(X_j - \hat{X}_j)^2}{r_{j-1}} + \sum_{j=p+1}^n(X_j -\phi_1X_{j-1}- ... -\phi_p X_{j-p} )^2\}
+\]
+\[
+=   (2\pi\sigma^2)^{-n/2}(det G_p)^{-1/2}*exp\{\frac{-1}{\sigma^2}[\mathbb{X}_p^TG^{-1}_p\mathbb{X_p}+\sum_{t=p+1}^n(X_t - \phi_1 X_{t-1}- ... -\phi_pX_{t-p})^2]\}
+\]
+as we needed.
+\\
+##5.10
+From Section 5.2 we know what $\sigma^2 \Gamma_n$ look like.
+
+thus we would have
+\[
+det(G_2)^{-1} = (1-\phi_2^2)^2 - \phi_1^2(1+\phi_2)^2
+\]
+\[
+\mathbb{X}_2^TG_2^{-1}\mathbb{X}_2 = (1-\phi_2^2)(X_1^2+X_2^2) -2\phi_1(1-\phi_2)X_1X_2
+\]
+And from taking the log on the result 5.9 we get the log likelihood:
+$$
+-\frac{n}{2} \ln (2\pi \sigma^2) - \frac{1}{2} \ln ((1-\phi_2)^2 - \phi_1^2(1+\phi_2^2)) - \frac{1}{2\sigma^2}\{(1-\phi_2^2)(X_1^2+X_2^2)-2\phi_1 (1+\phi_2)X_1X_2+\sum_{j=3}^n(X_j - \phi_1X_{j-1}-\phi_2 X_{j-2})^2\}
+$$
+Take our 
+$$S(\phi, \sigma^2) = - \frac{1}{2\sigma^2}\{(1-\phi_2^2)(X_1^2+X_2^2)-2\phi_1 (1+\phi_2)X_1X_2+\sum_{j=3}^n(X_j - \phi_1X_{j-1}-\phi_2 X_{j-2})^2\}$$
+If you differentiate $S(\phi, \sigma^2)$ with respect to $\phi_1$
+$$
+\frac{\partial S}{\partial \phi_1}= \frac{-1}{2\sigma^2}\{-2(1+\phi_2)X_1X_2 -2\sum_{j=3}^n X_{j-1}(X_j -\phi_1X_{j-1}-\phi_2X_{j-2})\} =$$
+$$\sigma^{-2} \{(1+\phi_2)X_1X_2 +\sum_{j=3}^n X_{j-1}(X_j -\phi_1X_{j-1}-\phi_2X_{j-2}) \} = 0
+$$
+and
+$$
+\frac{\partial S}{\partial \phi_2} = \frac{-1}{2\sigma^2}\{-2\phi_2(X_1^2+X_2^2)-2\phi_1X_1X_2 +  -2\sum_{j=3}^n X_{j-1}(X_j -\phi_1X_{j-2}-\phi_2X_{j-2})\} = 
+$$
+$$
+\frac{1}{\sigma^2}\{\phi_2(X_1^2+X_2^2)+\phi_1X_1X_2 +  \sum_{j=3}^n X_{j-1}(X_j -\phi_1X_{j-2}-\phi_2X_{j-2})\} = 0
+$$
+
+$$
+\frac{1}{(1-\phi_2^2)-\phi_1}+\frac{1}{\sigma^2}(1+\phi_2
+X_1X_2 - \sum_{j=3}^nX_{j-1}(X_j - \phi_1 X_{j-1} - \phi_2X_{j-2})$$
+
+but with respect to $\phi_2$ we don't get a linear equation..
+
+
+
+##5.12
+\[
+G_1^{-1}=  (1-\phi^2) = \det (G_1)^{-1}
+\]
+We have the log likelihood
+\[
+-\frac{n}{2}(\ln 2\pi\sigma^2)-\frac{n}{2}(ln(1-\phi^2)) - \frac{1}{2\sigma^2}((1-\phi^2)X_1^2 + \sum_{j=2}^n(X_j - \phi X_{j-1})^2)
+\]
+If we differentiate this with respect to $\phi$, and set it to zero, we have
+\[
+-\frac{n}{2}\frac{-2\phi}{1-\phi^2} -\frac{1}{2\sigma^2}(-2\phi X_1^2-2\sum_{j=2}^n(X_j - \phi X_{j-1})) = 0
+\]
+\[
+n \frac{\phi}{1-\phi^2} + \frac{1}{\sigma^2}(\phi X_1^2 + \sum_{j=1}^nX_{j-1}(X_j-X_{j-1})) = 0
+\]
+\[
+\implies  n\phi + \frac{1}{\sigma^2}(\phi(1-\phi^2)X_1^2 + (1-\phi^2)\sum_{j=1}^nX_{j-1}(X_j-X_{j-1})) = 0
+\]
+which is a cubic equation.
+
+**Question 6.9**
+<br/>
+**a)**  First, we set up and plot our data:
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(tidyquant)
+library(tseries)
+library(itsmr)
+library(forecast)
+library(tibbletime)
+library(tsbox)
+library(gridExtra)
+library(here)
+library(fpp2)
+
+# Defining data
+beer_data <- dget("beer.Rput")
+beer_ts <- ts(beer_data[1:410], frequency=12, start=c(1956, 1))
+plotc(beer_ts)
+```
+<br/>
+Remark that the data shows heteroscedasticity with increasing variance , and that there is an upward trend. The ADF and KPSS tests confirm that the series is not stationary:
+```{r warning=FALSE}
+adf.test(beer_ts)
+kpss.test(beer_ts)
+```
+<br/>
+We take the log-difference of the series to adjust for variance and trend:
+```{r warning=FALSE}
+beer_log <- log(beer_ts)
+beer_adj <- diff(beer_log)
+plot(beer_adj)
+```
+<br/>
+Visual inspection suggests that the series might be stationary. Running the ADF and KPSS tests:
+```{r warning=FALSE}
+adf.test(beer_adj)
+kpss.test(beer_adj)
+```
+<br/>
+The ADF test rejects the hypothesis that the series is non-stationary, and the KPSS test fails to reject the hypothesis that the series is stationary. At this stage, we can conclude that we have enough evidence to claim that the series is stationary after taking the log and differencing once.
+<br/>
+To keep things simple when back-transforming our model, we will only pass the log-series to the auto.arima function, and let it do the differencing:
+```{r warning=FALSE}
+beer_arima <- auto.arima(beer_log, seasonal=TRUE, stepwise=FALSE, approximation=FALSE)
+beer_forecast <- forecast(beer_arima)
+summary(beer_arima)
+```
+
+Hence the best model is an ARIMA(0,1,3)(0,1,2)[12].
+<br/><br/>
+
+**b) 95% Bounds**
+<br/><br/>
+
+**c) Checking the residuals** Taking a look at the model residuals:
+```{r}
+plot(residuals(beer_arima))
+ggAcf(residuals(beer_arima))
+```
+<br/>
+The residual plot shows us that we can treat the residuals as approximate white noise while the ACF plot shows significant correlations at certain lags, this might suggest that the series is underdifferenced.
+
+**d) ** graphing the forecasts with 95% prediction bounds:
+```{r}
+plot(forecast(beer_arima))
+```
+<br/>
+Zooming in and comparing the actual last 12 values with the forecasted values & prediction bounds:
+```{r}
+forecasts <- ts(exp(beer_forecast$mean[1:12]), start=c(1990, 3), frequency=12)
+actual <- ts(beer_data[411:422], start=c(1990,3), frequency=12)
+ts.plot(actual, col="black", ylim=c(100,240), main="Actual vs Forecasted values", ylab="Amount produced", xlab="Year")
+lines(forecasts, col="red")
+lines(ts(exp(beer_forecast$upper[1:12]), start=c(1990, 3), frequency=12), col="lightcoral", lty=2)
+lines(ts(exp(beer_forecast$lower[1:12]), start=c(1990, 3), frequency=12), col="lightcoral", lty=2)
+legend("bottomright", legend=c("Actual values", "Forecasted values", "95% prediction bounds"), col=c("black", "red", "lightcoral"), lty=c(1,1,2))
+```
+<br/><br/>
+
+**e) **The numerical values for the next-12 forecasts are:
+```{r}
+forecasts[1:12]
+```
+<br/>
+And the 95% bound numerical values are:
+```{r}
+# Lower bound
+(exp(beer_forecast$lower[1:12]))
+
+# Upper bound
+(exp(beer_forecast$upper[1:12]))
+
+```
+<br/>
+We note here that the last value of the series is within the 95% prediction bound.
+<br/><br/>
+
+**f) **  The actual forecast error is the difference between the actual values and the predicted values:
+```{r}
+actual - forecasts
+```
+<br/><br/>
+
+<br/><br/>
+
+
+**Question 6.10 - Repeating the above but with classical decomposition**
+<br/>
+The classical decomposition process is the following: decompose the time series into a seasonal and trend component. Then, fit an ARIMA to each one of those components individually. The sum of the forecasts of the two ARIMA sums should then be a reasonable forecast of the original time series.
+<br/><br/>
+**a) **
+Recall that our time series is:
+```{r}
+plotc(beer_ts)
+```
+<br/>
+We now decompose the time series and visualize the its different components:
+```{r}
+beer_decomp <- decompose(beer_ts)
+plot(beer_decomp)
+```
+<br/>
+
+We then fit an ARIMA model to the seasonal and trend components, then define their forecast objects:
+```{r}
+# Fitting ARIMA models to trend & seasonality
+trend_arima <- auto.arima(beer_decomp$trend, seasonal=TRUE, stepwise=FALSE, approximation=FALSE)
+season_arima <- auto.arima(beer_decomp$seasonal, seasonal=TRUE, stepwise=FALSE, approximation=FALSE)
+summary(trend_arima)
+summary(season_arima)
+
+# Fitting the overall model
+model_fit <- trend_arima$fitted + season_arima$fitted
+
+# Defining forecast objects
+trend_forecast <- forecast(trend_arima)
+season_forecast <- forecast(season_arima)
+
+# Summing the forecasts
+decomp_forecast <- ts((trend_forecast$mean + season_forecast$mean), frequency=12, start=c(1990, 3))
+```
+<br/><br/>
